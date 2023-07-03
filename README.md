@@ -1,4 +1,4 @@
-# vote--
+# 在线投票系统
 基于springboot+Thymeleaf+mybatis的在线自动匹配投票系统，实训项目
 
 ![1](https://github.com/2254649642/vote--/assets/70480861/1cbd829e-855d-4e4e-8e34-a7c44fa11c79)
