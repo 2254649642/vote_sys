@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>个人信息</title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+        <!--头部信息-->
+        <header class="lyear-layout-header">
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 个人信息展示 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+
+        </header>
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="edit-avatar">
+                                        <img src="images/users/avatar.jpg"
+                                             th:src="@{'/headImg/'+'defaultImg.jpeg'}"
+                                             alt="..."
+                                             class="img-avatar">
+                                </div>
+                                <hr>
+                                <form method="post" action="#!" class="site-form" id="form-register">
+                                    <div class="form-group">
+                                        <label for="userAccount">用户名</label>
+                                        <input type="text" class="form-control" name="account"
+                                               th:value="${user.account}" id="userAccount"
+                                               value="lightyear" disabled="disabled"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="userRealName">姓名</label>
+                                        <input type="text" class="form-control" name="user_name" id="userRealName"
+                                               placeholder="输入您的姓名" value="笔下光年"
+                                               th:value="${user.user_name}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="userTelephone">联系电话</label>
+                                        <input type="text" class="form-control" name="tel" id="userTelephone"
+                                               aria-describedby="emailHelp" placeholder="请输入正确的电话号码"
+                                               value="16578492864" th:value="${user.tel}">
+                                        <small id="emailHelp"
+                                               class="form-text text-muted">请保证您填写的联系电话是正确的。</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="remark">简介</label>
+                                        <textarea class="form-control"
+                                                  name="content" id="remark" rows="3" th:text="${user.content}"></textarea>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary" id="editPersonal-submit">保存</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js"
+        th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+
+
+<script type="text/javascript">
+    $(() => {
+        $("#editPersonal-submit").click(function () {
+            let username = $("#userAccount").val()
+            let tel = $("#userTelephone").val()
+            let content = $("#remark").val()
+
+            let formInfo = $("#form-register").serialize();
+            $.ajax({
+                url: "/common/updateInfor",
+                type: "post",
+                data: formInfo,
+                success: function (data) {
+                    if (data.code === 200) {
+                        alert(data.message);
+                        window.location.href = "/common/personInfo";
+                    } else {
+                        alert(data.message);
+                    }
+                    console.log(data)
+                }
+            })
+        });
+    })
+</script>
+</body>
+</html>

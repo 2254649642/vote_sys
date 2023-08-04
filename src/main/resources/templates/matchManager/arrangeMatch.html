@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页 </title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="keywords" content="LightYear,光年,后台模板,后台管理系统,光年HTML模板">
+    <meta name="description" content="LightYear是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="lyear-layout-web">
+
+    <div class="lyear-layout-container">
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+        <!--头部信息-->
+        <header class="lyear-layout-header">
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 比赛对战匹配 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+
+        </header>
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid">
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-lg-10">
+                        <h1></h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <a th:href="@{/selectUser}">首页</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/selectMatch}">比赛管理</a>
+                            </li>
+                            <li class="active">
+                                <strong>对战匹配机制</strong>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="toolbar-btn-action">
+                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                            sec:authorize="hasAnyAuthority('ROLE_admin', 'ROLE_event_admin')"
+                            data-target="#addModal" data-useraccount="@mdo">自动匹配
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>对战编号</th>
+                            <th>选手1</th>
+                            <th>参赛作品1</th>
+                            <th>选手2</th>
+                            <th>参赛作品2</th>
+                            <th>对战状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="match,matchStatus:${matchedList}">
+                            <th scope="row" th:text="${matchStatus.index+1}">1</th>
+                            <td th:text="${match.id}">钦差大臣</td>
+                            <td th:text="${match.player_a}">果戈理</td>
+                            <td th:text="${match.a_song}">俄国</td>
+                            <td th:text="${match.player_b}">国外名族</td>
+                            <td th:text="${match.b_song}">125</td>
+                            <td th:switch="${match.state}">
+                                <span class="label label-success" th:case="1">正在投票中</span>
+                                <span class="label label-danger-light" th:case="2">投票已结束</span>
+                                <span class="label label-warning" th:case="3">投票未开始</span>
+                                <span class="label label-default" th:case="*"><em>NULL</em></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm"
+                                        sec:authorize="hasAnyAuthority('ROLE_admin', 'ROLE_event_admin')"
+                                        th:playerA="${match.player_a}"
+                                        th:playerB="${match.player_b}"
+                                        th:matchId="${match.id}"
+                                        data-loading-text="开启中..."
+                                        autocomplete="off"
+                                        onclick="startMatch(this.getAttribute('matchId'),this.getAttribute('playerA'),this.getAttribute('playerB'),1,'开启投票')">
+                                    开始
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm"
+                                        sec:authorize="hasAnyAuthority('ROLE_admin', 'ROLE_event_admin')"
+                                        th:playerA_id="${match.player_a_id}"
+                                        th:playerB_id="${match.player_b_id}"
+                                        th:matchId="${match.id}"
+                                        data-loading-text="停止中..."
+                                        autocomplete="off"
+                                        onclick="stopMatch(this.getAttribute('matchId'),this.getAttribute('playerA_id'),this.getAttribute('playerB_id'),2,'停止投票')">
+                                    停止
+                                </button>
+
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                        data-target="#deleteModal"
+                                        data-useraccount="@aduedd"
+                                        th:playerA="${match.player_a}"
+                                        th:playerB="${match.player_b}"
+                                        th:playerA_id="${match.player_a_id}"
+                                        th:playerB_id="${match.player_b_id}"
+                                        th:matchId="${match.id}"
+                                        th:matchState="${match.state}"
+                                        data-loading-text="跳转中..."
+                                        autocomplete="off"
+                                        onclick="detailsMatch(this.getAttribute('matchId'),this.getAttribute('playerA_id'),
+                                                this.getAttribute('playerB_id'),this.getAttribute('matchState'),0,'查看详情')">
+                                    查看详情
+                                </button>
+
+                                <button type="button" class="btn btn-info btn-sm"
+                                        sec:authorize="hasAnyAuthority('ROLE_admin', 'ROLE_event_admin')"
+                                        th:playerA_id="${match.player_a_id}"
+                                        th:playerB_id="${match.player_b_id}"
+                                        th:matchId="${match.id}"
+                                        onclick="analyzeScore(this.getAttribute('matchId'),this.getAttribute('playerA_id'),
+                                                              this.getAttribute('playerB_id'))">统计分数
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+
+</div>
+<!--手动匹配模态框-->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+     aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addModalLabel">选手对战匹配</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="add-form">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="matchNumber">随机生成组数</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="number" min="0" max="8" id="matchNumber"
+                                   name="matchNumber" placeholder="请输入生成多少组.." required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary" id="match-submit" data-loading-text="处理中..."
+                        autocomplete="off">匹配
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js" th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+
+<script type="text/javascript">
+    $(() => {
+        //对战匹配按钮
+        $("#match-submit").click(function () {
+            let matchNumber = $("#matchNumber").val();
+            if (matchNumber.length == 0 || matchNumber == 0) {
+                lightyear.loading('show');
+                setTimeout(function () {
+                    lightyear.notify('输入的比赛场组数不能为空或者0~', 'danger', 3000);
+                }, 1e3)
+                lightyear.loading('hide');
+                return;
+            }
+
+            var $btn = $(this).button('loading');
+            $.ajax({
+                url: "/admin/autoGenerateMatch",
+                type: "POST",
+                data: {
+                    "matchNumber": matchNumber,
+                }
+                , success: function (data) {
+                    setTimeout(function () {
+                        $btn.button("reset")
+                    }, 1e3 + (4 * 1e2))
+                    if (data.code == 200) {
+                        setTimeout(function () {
+                            lightyear.url("/admin/arrangeMatch")
+                            lightyear.notify('生成成功，页面即将自动跳转~', 'success', 2350);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify('生成失败，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+
+    })
+
+    //开始投票
+    function startMatch(matchId) {
+
+        $.ajax({
+            url: "/admin/startMatchVote",
+            type: "POST",
+            data: {
+                "matchId": matchId
+            }
+            , success: function (data) {
+                if (data.code == 200) {
+                    setTimeout(function () {
+                        lightyear.url("/admin/arrangeMatch")
+                        lightyear.notify('成功开启比赛投票，页面即将自动刷新~', 'success', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 300) {
+                    setTimeout(function () {
+                        lightyear.notify('开启比赛投票失败，已经结束的比赛无法开始投票~', 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 400) {
+                    setTimeout(function () {
+                        lightyear.notify('开启比赛投票失败，比赛已经开始投票~', 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }
+            },
+            error: function (data) {
+                alert("系统错误。")
+            }
+        })
+    }
+
+    //停止投票
+    function stopMatch(matchId, playerA_id, playerB_id) {
+        $.ajax({
+            url: "/admin/stopMatchVote",
+            type: "POST",
+            data: {
+                "matchId": matchId,
+                "playerA_id": playerA_id,
+                "playerB_id": playerB_id
+            }
+            , success: function (data) {
+                if (data.code == 200) {
+                    setTimeout(function () {
+                        lightyear.url("/admin/arrangeMatch")
+                        lightyear.notify('成功停止比赛投票，页面即将自动刷新~', 'success', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else {
+                    setTimeout(function () {
+                        lightyear.notify('停止比赛投票失败，此操作是违法操作~', 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }
+            },
+            error: function (data) {
+                alert("系统错误。")
+            }
+        })
+    }
+
+    //查看详情
+    function detailsMatch(matchId, playerA_id, playerB_id,matchState) {
+        console.log(matchState)
+        if (matchState == 3) {
+            setTimeout(function () {
+                lightyear.notify('查看投票详情失败，此比赛尚未开始~', 'danger', 100);
+            }, 1e3)
+            lightyear.loading('hide');
+            return
+        } else {
+            setTimeout(function () {
+                lightyear.url("/admin/votePage/?matchId=" + matchId + "&playerA_id=" + playerA_id + "&playerB_id=" + playerB_id)
+                lightyear.notify('跳转中，页面即将自动刷新~', 'success', 1000);
+            }, 1e3)
+            lightyear.loading('hide');
+        }
+    }
+
+    //    统计分析分数
+    function analyzeScore(matchId,playerA_id, playerB_id) {
+        lightyear.loading('show');
+        $.ajax({
+            url: "/admin/analyzeScore",
+            type: "POST",
+            data: {
+                "matchId": matchId,
+                "playerA_id": playerA_id,
+                "playerB_id": playerB_id
+            }
+            , success: function (data) {
+                if (data.code == 200) {
+                    setTimeout(function () {
+                        lightyear.url("/admin/arrangeMatch")
+                        lightyear.notify(data.message + '，页面即将自动刷新~', 'success', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 400) {
+                    //    已有比赛正在进行，无法开启其他比赛
+                    setTimeout(function () {
+                        lightyear.notify(data.message, 'danger', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 500) {
+                    setTimeout(function () {
+                        lightyear.notify(data.message, 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }else{
+                    setTimeout(function () {
+                        lightyear.notify(data.message, 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }
+            },
+            error: function (data) {
+                alert("系统错误。")
+            }
+        })
+    }
+</script>
+</body>
+</html>

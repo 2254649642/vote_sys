@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页 </title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="keywords" content="LightYear,光年,后台模板,后台管理系统,光年HTML模板">
+    <meta name="description" content="LightYear是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+
+</head>
+
+<body>
+<div class="lyear-layout-web">
+
+    <div class="lyear-layout-container">
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+        <!--头部信息-->
+        <header class="lyear-layout-header">
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 分数排行榜 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+
+        </header>
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid">
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-lg-10">
+                        <h1></h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <a th:href="@{/selectUser}">首页</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/selectMatch}">比赛管理</a>
+                            </li>
+                            <li class="active">
+                                <strong>分数排行榜</strong>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>胜出</th>
+                            <th>匹配场次</th>
+                            <th>选手姓名</th>
+                            <th>参赛作品</th>
+                            <th>获得票数</th>
+                            <th>评委打分</th>
+                            <th>综合得分</th>
+                            <!--                            <th>是否晋级</th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="score,number:${scoreList}">
+                            <th scope="row" th:text="${number.index+1}">1</th>
+                            <td th:class="${score.result == '输' ? 'fail' : (score.result == '平' ? 'draw' : 'win')}"
+                                th:text="${score.result}">胜出</td>
+                            <td th:text="${score.match_id}">匹配场次</td>
+                            <td th:text="${score.player_name}">选手姓名</td>
+                            <td th:text="${score.player_opus}">参赛作品</td>
+                            <td th:text="${score.player_poll}">获得票数</td>
+                            <td th:text="${score.score}">评委打分</td>
+                            <td th:text="${score.sum_score}">综合得分</td>
+                            <!--                            <td th:text="${score.isPromotion}"></td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js" th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

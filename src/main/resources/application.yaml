@@ -1,0 +1,28 @@
+server:
+  port: 8080
+#  servlet:
+#    context-path: /release
+
+mybatis:
+  type-aliases-package: com.cq.edu.pojo
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    map-underscore-to-camel-case: true
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/votes?serverTimezone=UTC
+
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML5
+    prefix: classpath:/templates/
+    suffix: .html
+
+filePath:
+  location: src/main/resources/static/headImg

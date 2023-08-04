@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>歌手管理</title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+
+        <!--头部信息-->
+
+        <!--头部信息-->
+        <header class="lyear-layout-header">
+
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 歌手信息管理 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+
+        </header>
+
+        <!--End 头部信息-->
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-toolbar clearfix">
+                                <form class="pull-right search-bar" method="get" action="#!" role="form">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-default btn-sm"
+                                                    onclick="window.location.reload()"><i
+                                                    class="mdi-24px mdi mdi-sync "></i></button>
+                                            <input type="hidden" name="search_field" id="search-field"
+                                                   value="title">
+                                            <button class="btn btn-default dropdown-toggle" id="search-btn"
+                                                    data-toggle="dropdown" type="button" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                标题 <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a tabindex="-1" href="javascript:void(0)"
+                                                       data-field="title">标题</a></li>
+                                                <li><a tabindex="-1" href="javascript:void(0)"
+                                                       data-field="cat_name">栏目</a></li>
+                                            </ul>
+                                        </div>
+                                        <input type="text" class="form-control" value="" name="keyword"
+                                               placeholder="请输入名称">
+                                    </div>
+                                </form>
+                                <div class="toolbar-btn-action">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#addModal" data-singerId="@mdo">添加
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="lyear-checkbox checkbox-primary">
+                                                    <input type="checkbox" id="check-all"><span></span>
+                                                </label>
+                                            </th>
+                                            <th>编号</th>
+                                            <th>真实姓名</th>
+                                            <th>联系电话</th>
+                                            <th>音乐风格</th>
+                                            <th>参赛作品</th>
+                                            <th>性别</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="singer:${singerList}">
+                                            <td>
+                                                <label class="lyear-checkbox checkbox-primary">
+                                                    <input type="checkbox" name="ids[]"
+                                                           value="1"><span></span>
+                                                </label>
+                                            </td>
+                                            <td th:text="${singer.id}">编号</td>
+                                            <td th:text="${singer.real_name}">真实姓名</td>
+                                            <td th:text="${singer.telephone}">联系电话</td>
+                                            <td th:text="${singer.player_music}">音乐风格</td>
+                                            <td th:text="${singer.player_opus}">参赛作品</td>
+                                            <td th:switch="${singer.sex}">
+                                                <span class="label label-primary-light" th:case="1">男士</span>
+                                                <span class="label label-pink-light" th:case="0">女士</span>
+                                                <span class="label label-default" th:case="*">保密</span>
+                                            </td>
+
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                        data-target="#editModal"
+                                                        th:data-singerId="${singer.id}"
+                                                        th:data-singerRealName="${singer.real_name}"
+                                                        th:data-singerTelephone="${singer.telephone}"
+                                                        th:data-singerStyle="${singer.player_music}"
+                                                        th:data-singerOpus="${singer.player_opus}"
+                                                        th:data-singerSex="${singer.sex}"> 编辑
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                        data-target="#deleteModal"
+                                                        th:data-singerRealName="${singer.real_name}"
+                                                        th:data-singerId="${singer.id}"> 删除
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="col-md-3">
+                                        <ul style="display: flex; list-style: none; white-space: nowrap;">
+                                            <li >
+                                                <a th:href="@{/eventadmin/singerManager/0}">首页&nbsp;</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="@{/eventadmin/singerManager/} + ${curPage - 1}">上一页&nbsp;</a>
+                                            </li>
+                                            <li>
+                                                <a th:text="'当前页数: ' + ${curPage + 1} + '/' + ${endPage}">&nbsp;&nbsp;</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="@{/eventadmin/singerManager/} + ${curPage + 1}">下一页&nbsp;</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="@{/eventadmin/singerManager/}+ ${endPage}">末页</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+    <!--编辑模态框-->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">编辑歌手信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="edit-form">
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-singerId">编号</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-singerId"
+                                       name="singerId" placeholder="" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-singerRealName">真实姓名</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-singerRealName"
+                                       name="singerRealName" placeholder="请输入真实姓名..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-singerTelephone">联系电话</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-singerTelephone"
+                                       name="singerTelephone" placeholder="请输入联系电话..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"
+                                   for="edit-singerStyle">音乐风格</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-singerStyle"
+                                       name="singerStyle" placeholder="请输入音乐风格..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"
+                                   for="edit-singerOpus">参赛作品</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-singerOpus"
+                                       name="singerOpus" placeholder="请输入参赛作品..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">性别</label>
+                            <div class="col-md-7 example-box">
+                                <label class="lyear-radio radio-inline radio-info radio-primary">
+                                    <input type="radio" name="sex" value="1" id="man-radio"><span>男士</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-pink radio-primary">
+                                    <input type="radio" name="sex" value="0" id="woman-radio"><span>女士</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-primary" id="edit-submit">修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--删除模态框-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+         aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">删除歌手信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <h5 class="modal-content" id="deleteContent"></h5>
+                            <input type="hidden" class="form-control"
+                                   id="deleteSingerId">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-warning" id="delete-submit">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--增加模态框-->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+         aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addModalLabel">添加歌手信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="add-form">
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-singerRealName">真实姓名</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="add-singerRealName"
+                                       name="singerRealName" placeholder="请输入真实姓名..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-singerTelephone">联系电话</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="add-singerTelephone"
+                                       name="singerTelephone" placeholder="请输入联系电话..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-singerStyle">音乐风格</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="add-singerStyle"
+                                       name="singerStyle" placeholder="请输入音乐风格..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-singerOpus">参赛作品</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="add-singerOpus"
+                                       name="singerOpus" placeholder="请输入参赛作品..">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">性别</label>
+                            <div class="col-md-7 example-box">
+                                <label class="lyear-radio radio-inline radio-info radio-primary">
+                                    <input type="radio" class="sexRadio" name="SingeSex" checked
+                                           value="1" ><span>男士</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-pink radio-primary">
+                                    <input type="radio" class="sexRadio" name="SingeSex"
+                                           value="0"><span>女士</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-primary" id="add-submit">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js"
+        th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+
+<script type="text/javascript">
+    $(() => {
+        // 消息提示示例
+        $('#example-success-notify').on('click', function () {
+            lightyear.loading('show');
+            // 假设ajax提交操作
+            setTimeout(function () {
+                lightyear.loading('hide');
+                lightyear.notify('修改成功，页面即将自动跳转~', 'success', 3000);
+            }, 1e3)
+        });
+
+        //编辑模态框回显数据
+        $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var singerId = button.data('singerid') //必须小写不然取不到值
+            var singerRealName = button.data('singerrealname')
+            var singerStyle = button.data('singerstyle')
+            var singerTelephone = button.data('singertelephone')
+            var singer_Player_opus = button.data('singeropus')
+            var singersex = button.data('singersex')
+            var modal = $(this)
+
+            modal.find('#edit-singerId').val(singerId)
+            modal.find('#edit-singerStyle').val(singerStyle)
+            modal.find('#edit-singerRealName').val(singerRealName)
+            modal.find('#edit-singerTelephone').val(singerTelephone)
+            modal.find('#edit-singerOpus').val(singer_Player_opus)
+
+            //回显性别
+            if (singersex === 1) {
+                modal.find('#man-radio').prop("checked", true).val(1);
+            } else {
+                modal.find('#woman-radio').prop("checked", true).val(0);
+            }
+        })
+
+
+        //新增按钮
+        $("#add-submit").click(function () {
+            let singerStyle = $("#add-singerStyle").val();
+            let singerRealName = $("#add-singerRealName").val();
+            let singerTelephone = $("#add-singerTelephone").val();
+            let singerOpus = $("#add-singerOpus").val();
+            let singerSex = $("input[name=SingeSex]:checked").val();
+
+
+            lightyear.loading('show');
+            $.ajax({
+                url: "/eventadmin/addUser",
+                type: "POST",
+                data: {
+                    "real_name": singerRealName,
+                    "sex": singerSex,
+                    "telephone": singerTelephone,
+                    "player_music": singerStyle,
+                    "player_opus": singerOpus
+                }
+                , success: function (data) {
+                    if (data.code == 200) {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.url("/eventadmin/singerManager")
+                            lightyear.notify('新增成功，页面即将自动跳转~', 'success', 3000);
+                        }, 1e3)
+                    } else {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.notify('新增失败，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+
+
+        //    修改
+        $("#edit-submit").click(function () {
+            let singerId = $("#edit-singerId").val();
+            let singerStyle = $("#edit-singerStyle").val();
+            let singerRealName = $("#edit-singerRealName").val();
+            let singerTelephone = $("#edit-singerTelephone").val();
+            let singerOpus = $("#edit-singerOpus").val();
+            let singerSex = $("input[name=sex]:checked").val();
+
+            lightyear.loading('show');
+            $.ajax({
+                url: "/eventadmin/updateSinger",
+                type: "POST",
+                data: {
+                    "id": singerId,
+                    "real_name": singerRealName,
+                    "sex": singerSex,
+                    "telephone": singerTelephone,
+                    "player_music": singerStyle,
+                    "player_opus": singerOpus
+                }
+                , success: function (data) {
+                    if (data.code == 200) {
+                        // 假设ajax提交操作
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.url("/eventadmin/singerManager")
+                            lightyear.notify('修改成功，页面将自动刷新', 'success', 3000);
+                        }, 1e3)
+                    } else {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.notify('更新数据错误，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+
+        //删除模态框回显数据
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('singerrealname')
+            var singerId = button.data('singerid')
+            console.log(singerId)
+            var modal = $(this)
+            modal.find('#deleteContent').text('确认删除 [ ' + recipient + " ]")
+            modal.find('.modal-body input').val(singerId)
+        })
+
+        //    删除
+        $("#delete-submit").click(function () {
+            let singerId = $("#deleteSingerId").val();
+            console.log(singerId)
+            lightyear.loading('show');
+            $.ajax({
+                url: "/eventadmin/deleteSinger/" + singerId,
+                type: "delete",
+                success: function (data) {
+                    if (data.code == 200) {
+                        // 假设ajax提交操作
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.url("/eventadmin/singerManager")
+                            lightyear.notify('删除成功，页面将自动刷新', 'success', 3000);
+                        }, 1e3)
+                    } else {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.notify('删除出现错误，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

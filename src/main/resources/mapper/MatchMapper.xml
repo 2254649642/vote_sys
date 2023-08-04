@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cq.edu.dao.MatchMapper">
+
+    <select id="selectAllChangePage" resultType="match">
+        SELECT * FROM t_match LIMIT 10 OFFSET #{pageCount};
+    </select>
+
+    <select id="selectAllSinger" resultType="match">
+        SELECT * FROM t_match;
+    </select>
+
+    <select id="selectAllMatchInfo" resultType="match">
+       select * from t_match
+    </select>
+
+    <select id="selectAllSingerByState" resultType="singer">
+        select * from t_singer where take_state = #{state}
+    </select>
+
+    <select id="selectMatchState" resultType="match">
+        select * from t_match where id = #{matchId}
+    </select>
+
+    <select id="selectVoteCountRecordByTick" resultType="VoteCount">
+        select * from t_vote_count where match_id = #{matchId}
+    </select>
+
+    <select id="selectVoteDetails"  resultType="VoteDetails">
+        SELECT a.id AS player_a_id, b.id AS player_b_id,a.player_music AS player_a_music, b.player_music AS player_b_music, t_match.player_a, t_match.player_b, t_match.a_song, t_match.b_song, t_vote_details.player_poll AS player_a_poll, t_vote_details_1.player_poll AS player_b_poll
+        FROM t_match
+                 LEFT JOIN t_singer a ON t_match.player_a_id = a.id
+                 LEFT JOIN t_singer b ON t_match.player_b_id = b.id
+                 LEFT JOIN t_vote_details ON t_match.id = t_vote_details.match_id AND t_match.player_a_id = t_vote_details.player_id
+                 LEFT JOIN t_vote_details t_vote_details_1 ON t_match.id = t_vote_details_1.match_id AND t_match.player_b_id = t_vote_details_1.player_id
+        WHERE t_match.id = #{matchId};
+    </select>
+
+    <select id="selectLockTable" resultType="VoteDetails">
+        SELECT * FROM `t_vote_details` WHERE `player_id`=#{player_id} AND match_id = #{match_id} FOR UPDATE;
+    </select>
+
+    <select id="selectSumScoreSort" resultType="SumScore">
+        SELECT t_sum_score.*, t_judge_score.score, t_vote_details.player_poll
+        FROM t_sum_score
+        LEFT JOIN t_judge_score ON t_sum_score.player_id = t_judge_score.player_id AND t_sum_score.match_id = t_judge_score.match_id
+        LEFT JOIN t_vote_details ON t_sum_score.player_id = t_vote_details.player_id AND t_sum_score.match_id = t_vote_details.match_id
+        ORDER BY match_id, sum_score DESC;
+    </select>
+
+    <select id="selectScore" resultType="score">
+        SELECT *
+        FROM t_judge_score
+        WHERE match_id = #{matchId} AND player_id = #{playerA_id} OR player_id = #{playerB_id};
+    </select>
+
+    <select id="selectSumScoreExist" resultType="sumscore">
+        SELECT *
+        FROM t_sum_score
+        WHERE match_id = #{match_id} AND player_id = #{player_id};
+    </select>
+
+    <select id="selectSumScore" resultType="sumscore">
+        SELECT ts.player_id, ts.score, tvd.player_poll
+        FROM t_judge_score ts
+                 JOIN t_vote_details tvd ON ts.player_id = tvd.player_id AND ts.match_id = tvd.match_id
+        WHERE ts.player_id = #{player_id} AND ts.match_id = #{match_id};
+    </select>
+
+    <insert id="insertAutoGenerateMatch" parameterType="match">
+        INSERT INTO `t_match` (`player_a`, `a_song`, `player_b`, `b_song`, `state`,`player_a_id`,`player_b_id`) VALUES
+        (#{player_a}, #{a_song}, #{player_b}, #{b_song}, #{state}, #{player_a_id}, #{player_b_id});
+    </insert>
+
+    <insert id="insertVoteCountRecordByTick" parameterType="VoteCount">
+        INSERT INTO `t_vote_count` (`user_id`, `match_id`, `player_id`) VALUES (#{user_id}, #{match_id}, #{player_id});
+    </insert>
+
+    <insert id="insertVoteDetails">
+        INSERT INTO `t_vote_details` (`player_id`, `player_poll`, `match_id`) VALUES (#{player_id}, 0, #{match.id});
+    </insert>
+
+    <insert id="insertSumScore" parameterType="sumscore">
+        INSERT INTO `t_sum_score` (`player_id`, `player_opus`, `match_id`, `sum_score`, `player_name`)
+                                        VALUES (#{player_id}, #{player_opus}, #{match_id}, #{sum_score},#{player_name});
+    </insert>
+
+    <update id="updateSingerState">
+        UPDATE `t_singer` SET `take_state`=#{take_state} WHERE (`id`=#{id});
+    </update>
+
+    <update id="updateMatchState">
+        UPDATE `t_match` SET `state`=#{state} WHERE (`id`=#{matchId});
+    </update>
+
+    <update id="updateMatchPoll">
+        UPDATE `t_vote_details` SET `player_poll`=`player_poll` + 1 WHERE `player_id`=#{player_id} AND match_id = #{match_id};
+    </update>
+
+
+
+</mapper>

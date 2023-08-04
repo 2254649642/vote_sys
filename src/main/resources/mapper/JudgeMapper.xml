@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cq.edu.dao.JudgeMapper">
+
+    <insert id="insertJudgeScore" parameterType="Score">
+        INSERT INTO `t_judge_score` (`player_id`, `judge_id`, `match_id`, `score`)
+                                                VALUES (#{player_id}, #{judge_id}, #{match_id}, #{score});
+    </insert>
+    
+    <select id="selectJudeScoreExist" resultType="Score">
+            SELECT * FROM `t_judge_score` WHERE `player_id`=#{player_id} AND match_id = #{match_id};
+    </select>
+
+</mapper>

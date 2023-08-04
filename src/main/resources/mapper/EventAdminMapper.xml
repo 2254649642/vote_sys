@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cq.edu.dao.EventAdminMapper">
+
+    <select id="selectAllChangePage" resultType="singer">
+        SELECT * FROM t_singer LIMIT 10 OFFSET #{pageCount};
+    </select>
+
+    <select id="selectAllSinger" resultType="singer">
+        SELECT * FROM t_singer;
+    </select>
+
+    <update id="updateSingerInfo" parameterType="singer">
+        UPDATE `t_singer` SET `real_name`=#{real_name}, `sex`=#{sex},
+        `telephone`=#{telephone}, `player_music`=#{player_music}, `player_opus`=#{player_opus} WHERE (`id`=#{id});
+    </update>
+
+    <insert id="insertSinger" parameterType="singer">
+        INSERT INTO `votes`.`t_singer` (`real_name`, `sex`, `telephone`, `player_music`, `player_opus`)
+        VALUES (#{real_name}, #{sex}, #{telephone}, #{player_music}, #{player_opus});
+    </insert>
+
+    <delete id="deleteSinger">
+        delete from `t_singer` where (id = #{id})
+    </delete>
+</mapper>

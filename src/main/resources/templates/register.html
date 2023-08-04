@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zxx" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>register</title>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href="//fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/login/css/style.css}" type="text/css"
+          media="all"/>
+
+    <!-- fontawesome v5-->
+    <script src="https://kit.fontawesome.com/af562a2a63.js" crossorigin="anonymous"></script>
+
+    <!--    jquery.js-->
+    <script th:src="@{/login/js/jquery.min.js}"></script>
+
+    <script type="text/javascript">
+        $(() => {
+            //提交注册表单
+            $("#register-submit").click(function () {
+                let formInfo = $("#form-register").serialize();
+                console.log(formInfo)
+                let userAccount = $("#userAccount").val()
+                let password = $("#userPassword").val()
+                let confirmPassword = $("#confirmPassword").val()
+
+                if (userAccount == null || password == null || confirmPassword == null) {
+                    alert("信息不完整");
+                    return false;
+                } else if (password != confirmPassword) {
+                    alert("前后密码不一致")
+                    return false;
+                } else if (userAccount.length < 6 || password.length < 6) {
+                    alert("账号或者密码必须大于6位")
+                    return false;
+                }
+                $.ajax({
+                    url: "/user/doRegister",
+                    type: "post",
+                    data: formInfo,
+                    success: function (data) {
+                        if (data.code === 200) {
+                            alert(data.message);
+                            window.location.href = "/user/login";
+                        } else {
+                            alert(data.message)
+                        }
+                    }
+                })
+            })
+
+        })
+    </script>
+</head>
+
+<body>
+<div class="signinform">
+    <h1>系 统 注 册</h1>
+    <!-- container -->
+    <div class="container">
+        <!-- main content -->
+        <div class="w3l-form-info">
+            <div class="w3l_form">
+                <div class="left_grid_info">
+                    <img src="../static/images/image.svg" th:src="@{/login/images/image.svg}" alt=""/>
+                </div>
+            </div>
+            <div class="w3_info">
+                <h2>账 号 注 册</h2>
+                <form action="#" method="" id="form-register">
+                    <div class="input-group">
+                        <span><i class="fas fa-user" aria-hidden="true"></i></span>
+                        <input type="email" name="account" id="userAccount" placeholder="请输入账号" required="">
+                        <!--                        <span class="help-block" style="color:red" th:if="@{param.error}" th:text="用户名或密码输入错误!"></span>-->
+                    </div>
+                    <div class="input-group">
+                        <span><i class="fas fa-key" aria-hidden="true"></i></span>
+                        <input type="password" name="password" id="userPassword" placeholder="请输入密码" required="">
+                    </div>
+                    <div class="input-group">
+                        <span><i class="fas fa-key" aria-hidden="true"></i></span>
+                        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="请再次输入密码"
+                               required="">
+                    </div>
+                    <input class="btn btn-primary btn-block" type="button" id="register-submit" value="注  册">
+                </form>
+                <p class="continue"><span>or Sign in with</span></p>
+                <div class="social-login">
+                    <a href="#facebook">
+                        <div class="facebook">
+                            <span class="fab fa-facebook" aria-hidden="true"></span> Facebook
+                        </div>
+                    </a>
+                    <a href="#google">
+                        <div class="google">
+                            <span class="fab fa-google-plus-g" aria-hidden="true"></span> Google
+                        </div>
+                    </a>
+                </div>
+                <p class="account">已有账户? <a href="#signup" th:href="@{/user/login}">点击登录</a></p>
+            </div>
+        </div>
+        <!-- //main content -->
+    </div>
+    <!-- //container -->
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2022 登录界面所有. 保留所有权利 | 由 Ricardo 设计 <a href="#"
+                                                        target="blank">Danger</a></p>
+    </div>
+    <!-- footer -->
+</div>
+</body>
+</html>
